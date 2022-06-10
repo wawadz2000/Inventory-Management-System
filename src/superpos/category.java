@@ -4,13 +4,19 @@
  * and open the template in the editor.
  */
 package superpos;
+import java.awt.Toolkit;
+import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.ResultSetMetaData;
+import java.sql.ResultSet;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author wawad
@@ -22,6 +28,7 @@ public class category extends javax.swing.JFrame {
      */
     public category() {
         initComponents();
+        table_update();
     }
     Connection coni;
     PreparedStatement pst;
@@ -40,6 +47,7 @@ public class category extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
@@ -47,12 +55,12 @@ public class category extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         txtcat = new javax.swing.JTextField();
         txtstatus = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        addbtn = new javax.swing.JButton();
+        editbtn = new javax.swing.JButton();
+        removebtn = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        CatTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -60,19 +68,53 @@ public class category extends javax.swing.JFrame {
         jPanel3.setBackground(new java.awt.Color(0, 153, 255));
 
         jLabel3.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
-        jLabel3.setText("Les catégories");
+        jLabel3.setForeground(new java.awt.Color(240, 240, 240));
+        jLabel3.setText("Catégories");
+        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel3MouseClicked(evt);
+            }
+        });
 
         jLabel4.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
-        jLabel4.setText("Les produits");
+        jLabel4.setForeground(new java.awt.Color(240, 240, 240));
+        jLabel4.setText("Produits");
 
         jLabel2.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(240, 240, 240));
         jLabel2.setText("Pos");
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel2MouseClicked(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(240, 240, 240));
         jLabel1.setText("Quitter");
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel1MouseClicked(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
-        jLabel5.setText("La caissière");
+        jLabel5.setForeground(new java.awt.Color(240, 240, 240));
+        jLabel5.setText("Caissière");
+        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel5MouseClicked(evt);
+            }
+        });
+
+        jLabel10.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(240, 240, 240));
+        jLabel10.setText("Marques");
+        jLabel10.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel10MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -81,27 +123,30 @@ public class category extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(53, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(200, 200, 200)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
-                .addGap(53, 53, 53)
+                .addGap(71, 71, 71)
+                .addComponent(jLabel10)
+                .addGap(63, 63, 63)
                 .addComponent(jLabel4)
-                .addGap(48, 48, 48)
+                .addGap(52, 52, 52)
                 .addComponent(jLabel2)
+                .addGap(49, 49, 49)
+                .addComponent(jLabel5)
                 .addGap(58, 58, 58)
                 .addComponent(jLabel1)
-                .addGap(48, 48, 48)
-                .addComponent(jLabel5)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(107, 107, 107))
         );
 
         jLabel6.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
@@ -129,24 +174,24 @@ public class category extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Ajouter");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        addbtn.setText("Ajouter");
+        addbtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                addbtnActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Modifier");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        editbtn.setText("Modifier");
+        editbtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                editbtnActionPerformed(evt);
             }
         });
 
-        jButton3.setText("supprimer");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        removebtn.setText("supprimer");
+        removebtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                removebtnActionPerformed(evt);
             }
         });
 
@@ -168,11 +213,11 @@ public class category extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap(52, Short.MAX_VALUE)
-                        .addComponent(jButton1)
+                        .addComponent(addbtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)
+                        .addComponent(editbtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3)))
+                        .addComponent(removebtn)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -188,13 +233,13 @@ public class category extends javax.swing.JFrame {
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(60, 60, 60)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(addbtn)
+                    .addComponent(editbtn)
+                    .addComponent(removebtn))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        CatTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -210,7 +255,12 @@ public class category extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        CatTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CatTableMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(CatTable);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -263,12 +313,47 @@ public class category extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
+    private void table_update(){
+        try {
+            int c;
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                coni=DriverManager.getConnection("jdbc:mysql://localhost/superpos", "root", "");
+                pst = coni.prepareStatement("select * from categorie");
+                ResultSet rs= pst.executeQuery();
+                ResultSetMetaData rsd = rs.getMetaData();
+                c = rsd.getColumnCount();
+                DefaultTableModel d = (DefaultTableModel)CatTable.getModel();
+                d.setRowCount(0);
+                while (rs.next()) {
+                    Vector v2= new Vector();
+                    for (int i = 1; i <= c; i++) {
+                        v2.add(rs.getString("ID"));
+                        v2.add(rs.getString("Categorie"));
+                        v2.add(rs.getString("Status"));
+                    }
+                    d.addRow(v2);
+                }
+                
+                
+                
+            
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(category.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(category.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    
+    }
     private void txtcatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtcatActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtcatActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void addbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addbtnActionPerformed
         // TODO add your handling code here:
         String categorie = txtcat.getText();
         String status = txtstatus.getSelectedItem().toString();
@@ -279,7 +364,8 @@ public class category extends javax.swing.JFrame {
              pst.setString(1, categorie);
              pst.setString(2, status);
              pst.executeUpdate();
-             JOptionPane.showMessageDialog(null,"Catégorie ajoutée ");
+             JOptionPane.showMessageDialog(null,"la catégorie a été ajouteé ");
+             table_update();
              txtcat.setText("");
              txtstatus.setSelectedIndex(-1);
              txtcat.requestFocus();
@@ -290,19 +376,119 @@ public class category extends javax.swing.JFrame {
             Logger.getLogger(category.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_addbtnActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void editbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editbtnActionPerformed
+             DefaultTableModel d1 = (DefaultTableModel)CatTable.getModel();
+             int selectindex = CatTable.getSelectedRow();
+             int id = Integer.parseInt(d1.getValueAt(selectindex, 0).toString());
+             String categorie = txtcat.getText();
+             String status = txtstatus.getSelectedItem().toString();
+             
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            coni=DriverManager.getConnection("jdbc:mysql://localhost/superpos", "root", "");
+             pst = coni.prepareStatement("update categorie set Categorie=? , Status=? where ID=? ");
+             pst.setString(1, categorie);
+             pst.setString(2, status);
+             pst.setInt(3, id);
+             pst.executeUpdate();
+             JOptionPane.showMessageDialog(null,"la catégorie a été modifié");
+             table_update();
+             txtcat.setText("");
+             txtstatus.setSelectedIndex(-1);
+             txtcat.requestFocus();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(category.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(category.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_editbtnActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void removebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removebtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+         DefaultTableModel d1 = (DefaultTableModel)CatTable.getModel();
+             int selectindex = CatTable.getSelectedRow();
+             int id = Integer.parseInt(d1.getValueAt(selectindex, 0).toString());
+             int dialogueResult = JOptionPane.showConfirmDialog(null, "voulez-vous vraiment supprimer le record", "Attention",JOptionPane.YES_NO_OPTION);
+        if (dialogueResult == JOptionPane.YES_OPTION) {
+             try {
+                 Class.forName("com.mysql.jdbc.Driver");
+                 coni=DriverManager.getConnection("jdbc:mysql://localhost/superpos", "root", "");
+             pst = coni.prepareStatement("delete from categorie where ID =? ");
+             pst.setInt(1, id);
+             pst.executeUpdate();
+             JOptionPane.showMessageDialog(null,"la categorie a été supprimé !");
+             table_update();
+             txtcat.setText("");
+             txtstatus.setSelectedIndex(-1);
+             txtcat.requestFocus();
+             
+             
+             } catch (ClassNotFoundException ex) {
+                 Logger.getLogger(category.class.getName()).log(Level.SEVERE, null, ex);
+             } catch (SQLException ex) {
+                 Logger.getLogger(category.class.getName()).log(Level.SEVERE, null, ex);
+             }
+            
+        }
+        
+        
+    }//GEN-LAST:event_removebtnActionPerformed
 
     private void txtstatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtstatusActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtstatusActionPerformed
+
+    private void CatTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CatTableMouseClicked
+
+                DefaultTableModel d1 = (DefaultTableModel)CatTable.getModel();
+                int selectindex = CatTable.getSelectedRow();
+                txtcat.setText(d1.getValueAt(selectindex, 1).toString());
+                txtstatus.setSelectedItem(d1.getValueAt(selectindex, 2).toString());
+                
+                
+
+
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CatTableMouseClicked
+
+    private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
+cashier p = new cashier();
+        this.hide();
+        p.setVisible(true);        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel5MouseClicked
+
+    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
+category p = new category();
+        this.hide();
+        p.setVisible(true);        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel3MouseClicked
+
+    private void jLabel10MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel10MouseClicked
+brand p = new brand();
+        this.hide();
+        p.setVisible(true);        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel10MouseClicked
+
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+login p = new login();
+        this.hide();
+        p.setVisible(true);         // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel2MouseClicked
+public void close()
+    {
+        WindowEvent close = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(close);
+     
+    
+    }
+    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+        // TODO add your handling code here:
+        close();
+    }//GEN-LAST:event_jLabel1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -340,10 +526,11 @@ public class category extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JTable CatTable;
+    private javax.swing.JButton addbtn;
+    private javax.swing.JButton editbtn;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -356,7 +543,7 @@ public class category extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JButton removebtn;
     private javax.swing.JTextField txtcat;
     private javax.swing.JComboBox<String> txtstatus;
     // End of variables declaration//GEN-END:variables
